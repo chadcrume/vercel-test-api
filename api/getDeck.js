@@ -15,15 +15,10 @@ function getDeck(req, res) {
   console.log(`\n+++++++\n \
     getDeck`);
   const reqVars = setVars(req, res);
-  console.log(`${reqVars.deckName} -- ${reqVars.contentType} -- ${req.getHeader('Content-Type')}`);
+  console.log(`${reqVars.deckName} -- ${req.getHeader('Content-Type')}`);
   var jsonOut = {
     deckName: reqVars.deckName
   };
-  // req.is('json') <<=== This isn't working for some reason
-  // if (req.get('content-type') == 'application/json') {
-  // } else if (req.get('content-type') == 'text/html') {
-  // } else {
-  // }
   const csvFilePath = 'deckData/' + reqVars.deckName + '.csv';
   const csv = require('csvtojson');
   csv()
@@ -41,8 +36,6 @@ function getDeck(req, res) {
 
 function setVars(req, res) {
   var jsonOut = {
-    type = req.getHeader('content-type'),
-    contentType = req.getHeader('content-type'),
     method = req.method,
     protocol = req.protocol,
     host = req.host,
