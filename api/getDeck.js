@@ -75,6 +75,6 @@ function setVars(req, res) {
   res.locals.contentType = req.get('content-type');
 }
 
-app.listen(port, () => {
-    console.log(`Server listening on the port::${port}`);
-});
+// app.listen(port, () => {
+//     console.log(`Server listening on the port::${port}`);
+// });
