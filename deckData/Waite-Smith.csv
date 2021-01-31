@@ -1,0 +1,79 @@
+Arcana,Suit,Arabic,Roman,Name,ImageFile,Text
+Major,,0,0,The Fool,major-00-fool.jpg,Open with no expectation. Infinite possibility. Uninhibited. In the moment. New beginning. When wisdom and naivité are the same
+Major,,1,I,The Magician,major-01-magician.jpg,
+Major,,2,II,The High Priestess,major-02-high-priestess.jpg,Serenity. Communion with the infinite behind the veil. Listening to and understanding (some anyway) the silence.
+Major,,3,III,The Empress,major-03-empress.jpg,Productivity. Creating abundance.
+Major,,4,IV,The Emperor,major-04-emperor.jpg,Regimen. Establishing structure.
+Major,,5,V,The Hierophant,major-05-hierophant.jpg,
+Major,,6,VI,The Lovers,major-06-lovers.jpg,
+Major,,7,VII,The Chariot,major-07-chariot.jpg,
+Major,,8,VIII,Strength,major-08-strength.jpg,"Anima and animus. Complimentary power and gentleness, acceptance, compassion. Composure. "
+Major,,9,IX,The Hermit,major-09-hermit.jpg,Searching for the truth within the self and out in the world.
+Major,,10,X,The Wheel of Fortune,major-10-wheel-of-fortune.jpg,Feeling change. Circumstances leading to inevitable change in circumstance. 
+Major,,11,XI,Justice,major-11-justice.jpg,
+Major,,12,XII,The Hanged Man,major-12-hanged-man.jpg,Transition. Suspension. Sacrifice. Accepting a situation to gain perspective and learn a lesson.
+Major,,13,XIII,Death,major-13-death.jpg,"The end of a cycle, the beginning of transformation."
+Major,,14,XIV,Temperance,major-14-temperance.jpg,"Moderation, the right mix of elements that may seem incompatible."
+Major,,15,XV,The Devil,major-15-devil.jpg,
+Major,,16,XVI,The Tower,major-16-tower.jpg,
+Major,,17,XVII,The Star,major-17-star.jpg,"Serenity. A glimpse into a possible future. Quietly tending to that future. Quietly inspired, generous, and uninhibited."
+Major,,18,XVIII,The Moon,major-18-moon.jpg,
+Major,,19,XIX,The Sun,major-19-sun.jpg,
+Major,,20,XX,Judgement,major-20-judgement.jpg,Reconciling everything past that has led to this moment and moving forward into something completely new.
+Major,,21,XXI,The World,major-21-world.jpg,Through the threshold of unity
+Minor,Wands,1,I,Ace,wands-01-ace.jpg,
+Minor,Wands,2,II,,wands-02.jpg,
+Minor,Wands,3,III,,wands-03.jpg,Accomplishment. Vision and know-how.
+Minor,Wands,4,IV,,wands-04.jpg,Celebratory excitement. Phase 1 completed successfully. Enjoy the moment but keep the momentum going.
+Minor,Wands,5,V,,wands-05.jpg,Competition. Struggle and aggravation  Restless energy. Refinement through adversity
+Minor,Wands,6,VI,,wands-06.jpg,
+Minor,Wands,7,VII,,wands-07.jpg,
+Minor,Wands,8,VIII,,wands-08.jpg,
+Minor,Wands,9,IX,,wands-09.jpg,Vigilance and determination
+Minor,Wands,10,X,,wands-10.jpg,Over burdened. Full responsibility for everything achieved.
+Minor,Wands,11,XI,Page,wands-11-page.jpg,"Charisma, enthusiasm, energy."
+Minor,Wands,12,XII,Knight,wands-12-knight.jpg,Passion and daring. Charisma.
+Minor,Wands,13,XIII,King,wands-13-king.jpg,"Bold originality, fearless creativity. Highest spiritual passion."
+Minor,Wands,14,XIV,Queen,wands-14-queen.jpg,"Radiant confidence, Attractive enthusiasm."
+Minor,Cups,1,I,Ace,cups-01-ace.jpg,
+Minor,Cups,2,II,,cups-02.jpg,Bond. Love. Partnership.
+Minor,Cups,3,III,,cups-03.jpg,Merriment. Joy. Festivities
+Minor,Cups,4,IV,,cups-04.jpg,
+Minor,Cups,5,V,,cups-05.jpg,Loss. Grief. Acceptance of value of what remains.
+Minor,Cups,6,VI,,cups-06.jpg,
+Minor,Cups,7,VII,,cups-07.jpg,
+Minor,Cups,8,VIII,,cups-08.jpg,Leaving behind the familiar or self indulgent to seek better.
+Minor,Cups,9,IX,,cups-09.jpg,Satisfaction. Personal fulfillment.
+Minor,Cups,10,X,,cups-10.jpg,Broad spectrum emotional maturity and fulfillment. Risk of social bubble.
+Minor,Cups,11,XI,Page,cups-11-page.jpg,Talk to the fish
+Minor,Cups,12,XII,Knight,cups-12-knight.jpg,Visions of life purpose.
+Minor,Cups,13,XIII,King,cups-13-king.jpg,Compassionate and creative intelligence. Emotional maturity.
+Minor,Cups,14,XIV,Queen,cups-14-queen.jpg,"Loving, understanding, supporting."
+Minor,Swords,1,I,Ace,swords-01-ace.jpg,
+Minor,Swords,2,II,,swords-02.jpg,
+Minor,Swords,3,III,,swords-03.jpg,Sorrow.
+Minor,Swords,4,IV,,swords-04.jpg,
+Minor,Swords,5,V,,swords-05.jpg,Disgrace and dishonor
+Minor,Swords,6,VI,,swords-06.jpg,
+Minor,Swords,7,VII,,swords-07.jpg,
+Minor,Swords,8,VIII,,swords-08.jpg,
+Minor,Swords,9,IX,,swords-09.jpg,
+Minor,Swords,10,X,,swords-10.jpg,
+Minor,Swords,11,XI,Page,swords-11-page.jpg,
+Minor,Swords,12,XII,Knight,swords-12-knight.jpg,
+Minor,Swords,13,XIII,King,swords-13-king.jpg,Lucid reasoning. Intellectual clarity. Fair judgements.
+Minor,Swords,14,XIV,Queen,swords-14-queen.jpg,
+Minor,Coins,1,I,Ace,coins-01-ace.jpg,Feet firmly on the ground. Seed of creation and prosperity.
+Minor,Coins,2,II,,coins-02.jpg,
+Minor,Coins,3,III,,coins-03.jpg,
+Minor,Coins,4,IV,,coins-04.jpg,
+Minor,Coins,5,V,,coins-05.jpg,Hardship. Rejection. Unnecessary struggle. Rejecting assistance out of pride. Reassessing values.
+Minor,Coins,6,VI,,coins-06.jpg,Service and gratitude.
+Minor,Coins,7,VII,,coins-07.jpg,
+Minor,Coins,8,VIII,,coins-08.jpg,"Craftsmanship and diligence, as a master or apprentice."
+Minor,Coins,9,IX,,coins-09.jpg,Abundant harvest resulting from prudence and refinement.
+Minor,Coins,10,X,,coins-10.jpg,
+Minor,Coins,11,XI,Page,coins-11-page.jpg,
+Minor,Coins,12,XII,Knight,coins-12-knight.jpg,
+Minor,Coins,13,XIII,King,coins-13-king.jpg,
+Minor,Coins,14,XIV,Queen,coins-14-queen.jpg,Practical abundance and stability. Great accomplishments built up from a love and respect for the essentials.
