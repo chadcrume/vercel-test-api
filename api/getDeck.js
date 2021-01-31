@@ -15,7 +15,7 @@ function getDeck(req, res) {
   console.log(`\n+++++++\n \
     getDeck`);
   const reqVars = setVars(req, res);
-  console.log(`${reqVars.deckName} -- ${reqVars.contentType} -- ${req.headers('content-type')} -- ${req.getHeader('Content-Type')}`);
+  console.log(`${reqVars.deckName} -- ${reqVars.contentType} -- ${req.getHeader('Content-Type')}`);
   var jsonOut = {
     deckName: reqVars.deckName
   };
