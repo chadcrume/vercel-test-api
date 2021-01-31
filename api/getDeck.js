@@ -11,20 +11,20 @@ module.exports = getDeck;
 // app.get(["/deckData/:deckName/", "/deckData/:deckName/*"], getDeck);
 
 // Set up REST end point
-function getDeck(req, res, next) {
+function getDeck(req, res) {
   console.log(`\n+++++++\n \
     getDeck`);
-  setVars(req, res);
-  console.log(`${res.locals.deckName} -- ${res.locals.contentType} -- ${req.get('content-type')}`);
+  const reqVars = setVars(req, res);
+  console.log(`${reqVars.deckName} -- ${reqVars.contentType} -- ${req.headers('content-type')} -- ${req.getHeader('Content-Type')}`);
   var jsonOut = {
-    deckName: res.locals.deckName
+    deckName: reqVars.deckName
   };
   // req.is('json') <<=== This isn't working for some reason
   // if (req.get('content-type') == 'application/json') {
   // } else if (req.get('content-type') == 'text/html') {
   // } else {
   // }
-  const csvFilePath = 'deckData/' + res.locals.deckName + '.csv';
+  const csvFilePath = 'deckData/' + reqVars.deckName + '.csv';
   const csv = require('csvtojson');
   csv()
     .fromFile(csvFilePath)
@@ -37,42 +37,20 @@ function getDeck(req, res, next) {
       res.setHeader('Content-Type', 'application/json');
       res.json(jsonOut);
     })
-
-  // res.render("repo", (err, html) => {
-  //   console.log(`${res.locals.deckName} -- ${res.locals.contentType} -- ${req.get('content-type')}`);
-  //   // req.is('json') <<=== This isn't working for some reason
-  //   // if (req.get('content-type') == 'application/json') {
-  //   // } else if (req.get('content-type') == 'text/html') {
-  //   // } else {
-  //   // }
-  //   const csvFilePath = 'deckData/' + res.locals.deckName + '.csv';
-  //   const csv = require('csvtojson');
-  //   csv()
-  //     .fromFile(csvFilePath)
-  //     .then((jsonObj) => {
-  //       jsonOut = jsonObj;
-  //       // console.log(jsonObj);
-  //       res.setHeader('Content-Type', 'application/json');
-  //       res.json(jsonOut);
-  //     })
-
-  //   // // Async / await usage
-  //   // const jsonArray=await csv().fromFile(csvFilePath);
-  //   // console.log(jsonObj);
-  // });
-
-  // next();
 }
 
 function setVars(req, res) {
-  jsonOut = {};
-  res.locals.type = req.get('content-type');
-  res.locals.type2 = req.type;
-  res.locals.is = req.is('json');
-  res.locals.url = decodeURIComponent(req.url);
-  res.locals.deckName = decodeURIComponent(req.params.deckName);
-  res.locals.method = req.method;
-  res.locals.contentType = req.get('content-type');
+  var jsonOut = {
+    type = req.getHeader('content-type'),
+    contentType = req.getHeader('content-type'),
+    method = req.method,
+    protocol = req.protocol,
+    host = req.host,
+    path = decodeURIComponent(req.path),
+    query = decodeURIComponent(req.query),
+    deckName = decodeURIComponent(req.query.deckName),
+  };
+  return jsonOut;
 }
 
 // app.listen(port, () => {
