@@ -15,11 +15,13 @@ function getDeck(req, res) {
   console.log(`\n+++++++\n \
     getDeck`);
   const reqVars = setVars(req, res);
-  console.log(`${reqVars.deckName} -- ${req.getHeader('Content-Type')}`);
+  console.log(` -- ${reqVars.deckName}`);
+  // console.log(` -- ${req.getHeader('Content-Type')}`);
   var jsonOut = {
     deckName: reqVars.deckName
   };
   const csvFilePath = 'deckData/' + reqVars.deckName + '.csv';
+  console.log(`csvFilePath -- ${csvFilePath}`);
   const csv = require('csvtojson');
   csv()
     .fromFile(csvFilePath)
@@ -36,12 +38,12 @@ function getDeck(req, res) {
 
 function setVars(req, res) {
   var jsonOut = {
-    method = req.method,
-    protocol = req.protocol,
-    host = req.host,
-    path = decodeURIComponent(req.path),
-    query = decodeURIComponent(req.query),
-    deckName = decodeURIComponent(req.query.deckName),
+    method: req.method,
+    protocol: req.protocol,
+    host: req.host,
+    path: req.path,
+    query: req.query,
+    deckName: req.query.deckName,
   };
   return jsonOut;
 }
