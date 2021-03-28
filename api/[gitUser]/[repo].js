@@ -79,6 +79,7 @@ module.exports = async (req, res) => {
 
     // Get file contents
     console.log(`file to read: ${locals.repoResourcePath}`);
+    res.json( jsonOut );
     // fs.readFile( `${locals.repoResourcePath}`, 
     //   (err, data) => {
     //     if (err) {

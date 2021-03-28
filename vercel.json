@@ -6,6 +6,6 @@
     }
     ,
     "rewrites": [
-        { "source": "/ccc/:gitUser/:repo/:path*", "destination": "/api/[gitUser]/[repo].js" }
+        { "source": "/(api|ccc)/:gitUser/:repo/:path*", "destination": "/api/[gitUser]/[repo].js" }
     ]
 }
