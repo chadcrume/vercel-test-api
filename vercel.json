@@ -1,0 +1,7 @@
+{
+    "functions": {
+        "api/deck/[deckName].js": {
+            "includeFiles": "api/deck/deckData/**"
+        }
+    }
+}

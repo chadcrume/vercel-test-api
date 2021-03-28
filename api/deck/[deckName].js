@@ -22,6 +22,12 @@ function getDeck(req, res) {
   };
   const csvFilePath = 'deckData/' + reqVars.deckName + '.csv';
   console.log(`csvFilePath -- ${csvFilePath}`);
+
+  const { readFileSync } = require('fs')
+  const { join } = require('path')
+  const file = readFileSync(join(__dirname, csvFilePath), 'utf8')
+  console.log(`file -- ${file}`);
+
   const csv = require('csvtojson');
   csv()
     .fromFile(csvFilePath)

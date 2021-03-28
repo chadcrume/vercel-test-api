@@ -1,2 +1,9 @@
-# react-nodejs-example
-Example Project demonstrating how to develop React application with Nodejs 
+# vercel-test-api
+Example of serverless function in Vercel
+
+## usage
+```sh
+vercel dev
+```
+URL format ...
+
