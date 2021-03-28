@@ -4,4 +4,8 @@
             "includeFiles": "api/deck/deckData/**"
         }
     }
+    ,
+    "rewrites": [
+        { "source": "/ccc/:gitUser/:repo/:path*", "destination": "/api/[gitUser]/[repo].js" }
+    ]
 }
