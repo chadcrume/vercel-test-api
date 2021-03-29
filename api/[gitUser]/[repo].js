@@ -23,8 +23,8 @@ module.exports = async (req, res) => {
   // res.send(`Hello ${query.name}, ${req.method}, you just parsed the request body!`)
 
   const gitRootPath = '/Users/chadcrume/Git/';
+  const { join } = require('path')
   const fs = require('fs');
-  var Promise = require('promise');
 
   console.log(`\n+++++++\nadhocSetVars`);
   jsonOut = {};
@@ -35,32 +35,34 @@ module.exports = async (req, res) => {
   locals.repo = decodeURIComponent(req.query.repo);
   locals.url = decodeURIComponent(req.url);
   locals.path = decodeURIComponent(req.url)
-  .replace(new RegExp(`(/api|/ccc)?/${locals.gitUser}/${locals.repo}/?`,"g"), '')
-  .replace(new RegExp(`\\?(.*)`,"g"), '');
-  locals.repoRootPath = gitRootPath + locals.repo +'/';
-  locals.repoResourcePath = locals.repoRootPath + locals.path;
+    .replace(new RegExp(`(/api|/ccc)?/${locals.gitUser}/${locals.repo}/?`, "g"), '')
+    .replace(new RegExp(`\\?(.*)`, "g"), '');
+  locals.repoRootPath = gitRootPath + locals.repo + '/';
+  // locals.repoResourcePath = locals.repoRootPath + locals.path;
+  locals.repoResourcePath = join(__dirname, 'repos', locals.path);
   locals.repoResourceParentPathEls = locals.repoResourcePath.split('/');
   locals.repoResourceName = locals.repoResourceParentPathEls.pop();
-  locals.repoResourceParentPath = locals.repoResourceParentPathEls.join('/') +'/';
+  locals.repoResourceParentPath = locals.repoResourceParentPathEls.join('/') + '/';
   locals.isDir = fs.existsSync(locals.repoResourcePath) && fs.lstatSync(locals.repoResourcePath).isDirectory();
-  if (locals.isDir && locals.repoResourcePath[locals.repoResourcePath.length-1] != '/') locals.repoResourcePath += '/';
+  if (locals.isDir && locals.repoResourcePath[locals.repoResourcePath.length - 1] != '/') locals.repoResourcePath += '/';
   locals.method = req.method;
   locals.contentType = req.headers['content-type'];
 
   console.log(
-    '+++++++++++'+'\n'+
-    '  setVars'+'\n'+
-    'locals.gitUser = '+locals.gitUser +'\n'+
-    'locals.repo = '+locals.repo +'\n'+
-    'locals.url = '+locals.url +'\n'+
-    'locals.path = '+locals.path +'\n'
-    );
+    '+++++++++++' + '\n' +
+    '  setVars' + '\n' +
+    'locals.gitUser = ' + locals.gitUser + '\n' +
+    'locals.repo = ' + locals.repo + '\n' +
+    'locals.url = ' + locals.url + '\n' +
+    'locals.path = ' + locals.path + '\n' +
+    'locals.repoResourcePath = ' + locals.repoResourcePath + '\n'
+  );
 
   console.log(`\n+++++++\nadhocGetHtml @ ${locals.repoResourcePath}`);
 
   if (!locals.isDir) {
     // Files have data from route/repo data only, no git status or ls-files.
-    jsonOut = { 
+    jsonOut = {
       ...jsonOut,
       tpl: 'adhocGetHtml',
       repoRootPath: `${locals.repoRootPath}`,
@@ -79,30 +81,40 @@ module.exports = async (req, res) => {
 
     // Get file contents
     console.log(`file to read: ${locals.repoResourcePath}`);
-    res.json( jsonOut );
-    // fs.readFile( `${locals.repoResourcePath}`, 
-    //   (err, data) => {
-    //     if (err) {
-    //       // console.error(`Read file error : ${err}`);
-    //       res.json(err);
-    //       return;
-    //     };
-    //     locals.fileText = data;
-    //     console.log(`file : ${locals.repoResourcePath}\n${locals.fileText}`);
-    //     locals.fileHashes =  new AdHash( {text: data } );
-    //     console.log(locals.fileHashes.hashes);
-    //     jsonOut = { 
-    //       ...jsonOut,
-    //       fileText: `${locals.fileText}`,
-    //       fileHashes: locals.fileHashes.hashes,
-    //     };
-    //     res.render("repo", {...jsonOut, jsonOut:jsonOut});
-    //   }
-    // );  
+    // res.json( jsonOut );
+    fs.readFile(`${locals.repoResourcePath}`,
+      (err, data) => {
+        if (err) {
+          // console.error(`Read file error : ${err}`);
+          res.json(err);
+          return;
+        };
+        locals.fileText = data;
+        console.log(`file : ${locals.repoResourcePath}\n${locals.fileText}`);
+        jsonOut = {
+          ...jsonOut,
+          fileText: `${locals.fileText}`,
+        };
+        // locals.fileHashes =  new AdHash( {text: data } );
+        // console.log(locals.fileHashes.hashes);
+        // jsonOut = { 
+        //   ...jsonOut,
+        //   fileText: `${locals.fileText}`,
+        //   fileHashes: locals.fileHashes.hashes,
+        // };
+
+        fs.writeFile(`${locals.repoResourcePath}`, 'bye bye bye', function (err) {
+          if (err) return console.log(err);
+          console.log(`createText`);
+        });
+
+        res.json(jsonOut);
+      }
+    );
 
   } else {
     // Directories have data from route/repo data, git status, and ls-files.
-    jsonOut = { 
+    jsonOut = {
       ...jsonOut,
       tpl: 'adhocGetHtml',
       repoRootPath: `${locals.repoRootPath}`,
@@ -120,6 +132,6 @@ module.exports = async (req, res) => {
       lsFilesMsg: '',
       templateData: []
     };
-    res.json( jsonOut );
+    res.json(jsonOut);
   }
 }

@@ -1,7 +1,7 @@
 {
     "functions": {
         "api/deck/[deckName].js": {
-            "includeFiles": "api/deck/deckData/**"
+            "includeFiles": "api/[gitUser]/repos/**"
         }
     }
     ,
