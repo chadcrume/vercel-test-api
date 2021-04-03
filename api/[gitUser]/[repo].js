@@ -81,9 +81,18 @@ module.exports = async (req, res) => {
       templateData: []
     };
     const testDir = join(__dirname, 'repos');
+    console.log(`****************************** \n`+
+    `testDir = ${testDir}`);
     fs.readdir(testDir, function (err, items) {
+      if (err) {
+        res.json(err);
+        return;
+      }
+      if (!items) {
+        console.log('no items');
+        return;
+      }
       console.log(items);
-
       for (var i = 0; i < items.length; i++) {
         console.log(items[i]);
       }
