@@ -75,11 +75,20 @@ module.exports = async (req, res) => {
       gitUser: locals.gitUser,
       repo: locals.repo,
       path: `${locals.path}`,
-      query_txt: `${req.query.txt}`, 
+      query_txt: `${req.query.txt}`,
       title: `${locals.title}`,
       is: `${locals.is}`,
       templateData: []
     };
+    const testDir = join(__dirname, 'repos');
+    fs.readdir(testDir, function (err, items) {
+      console.log(items);
+
+      for (var i = 0; i < items.length; i++) {
+        console.log(items[i]);
+      }
+    });
+
 
     // Get file contents
     console.log(`file to read: ${locals.repoResourcePath}`);
@@ -105,7 +114,8 @@ module.exports = async (req, res) => {
         //   fileHashes: locals.fileHashes.hashes,
         // };
 
-        fs.writeFile(`${locals.repoResourcePath}`, req.query.txt, function (err) {
+        const newFileText = req.query.txt ? req.query.txt : 'nada';
+        fs.writeFile(`${locals.repoResourcePath}`, newFileText, function (err) {
           if (err) return console.log(err);
           console.log(`createText`);
         });
