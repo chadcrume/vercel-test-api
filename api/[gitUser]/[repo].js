@@ -55,7 +55,8 @@ module.exports = async (req, res) => {
     'locals.repo = ' + locals.repo + '\n' +
     'locals.url = ' + locals.url + '\n' +
     'locals.path = ' + locals.path + '\n' +
-    'locals.repoResourcePath = ' + locals.repoResourcePath + '\n'
+    'locals.repoResourcePath = ' + locals.repoResourcePath + '\n' +
+    'req.query.txt = ' + req.query.txt + '\n'
   );
 
   console.log(`\n+++++++\nadhocGetHtml @ ${locals.repoResourcePath}`);
@@ -74,6 +75,7 @@ module.exports = async (req, res) => {
       gitUser: locals.gitUser,
       repo: locals.repo,
       path: `${locals.path}`,
+      query_txt: `${req.query.txt}`, 
       title: `${locals.title}`,
       is: `${locals.is}`,
       templateData: []
@@ -103,7 +105,7 @@ module.exports = async (req, res) => {
         //   fileHashes: locals.fileHashes.hashes,
         // };
 
-        fs.writeFile(`${locals.repoResourcePath}`, 'bye bye bye', function (err) {
+        fs.writeFile(`${locals.repoResourcePath}`, req.query.txt, function (err) {
           if (err) return console.log(err);
           console.log(`createText`);
         });
