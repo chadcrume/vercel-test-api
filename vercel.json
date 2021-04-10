@@ -4,7 +4,7 @@
             "includeFiles": "api/deck/deckData/**"
         },
         "api/[gitUser]/[repo].js": {
-            "includeFiles": "api/[gitUser]/repos/**"
+            "includeFiles": "*(ccc.js|api/[gitUser]/repos/**)"
         }
     }
     ,

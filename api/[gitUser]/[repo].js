@@ -1,3 +1,13 @@
+import firebase from 'firebase/app';
+
+if (!firebase.apps.length) firebase.initializeApp({
+  apiKey: "AIzaSyBvLu3HlcsBkPDzJwQuLI5JXhIkv2jYUgc",
+  authDomain: "ringed-robot-309714.firebaseapp.com",
+  projectId: "ringed-robot-309714",
+  storageBucket: "ringed-robot-309714.appspot.com",
+  messagingSenderId: "476558642880",
+  appId: "1:476558642880:web:0ed34e9814556462716725"
+});
 // module.exports = getGit;
 
 // // module.exports = (req, res) => {
@@ -27,8 +37,8 @@ module.exports = async (req, res) => {
   const fs = require('fs');
 
   console.log(`\n+++++++\nadhocSetVars`);
-  jsonOut = {};
-  locals = {};
+  var jsonOut = {};
+  var locals = {};
   locals.title = "Browse";
   locals.url = decodeURIComponent(req.url);
   locals.gitUser = decodeURIComponent(req.query.gitUser);
@@ -80,28 +90,46 @@ module.exports = async (req, res) => {
       is: `${locals.is}`,
       templateData: []
     };
-    const testDir = join(__dirname, 'repos');
-    console.log(`****************************** \n`+
-    `testDir = ${testDir}`);
+    console.log(`****************************** \n`)
+    const testDir = join(__dirname, '');
+    const testDir1 = join(__dirname, 'repos');
+    const testDir2 = join(__dirname, 'repos', 'mzc');
+    const testDir3 = join(__dirname, 'repos', 'mzc', 'MAZC.txt');
+    console.log(`exists??? === ${fs.existsSync(testDir)}`)
+    console.log(`exists??? === ${fs.existsSync(testDir1)}`)
+    console.log(`exists??? === ${fs.existsSync(testDir2)}`)
+    console.log(`exists??? === ${fs.existsSync(testDir3)}`)
+    console.log(`****************************** \n` +
+      `testDir = ${testDir}`);
     fs.readdir(testDir, function (err, items) {
       if (err) {
+        console.log(err);
         res.json(err);
         return;
       }
       if (!items) {
         console.log('no items');
-        return;
+        // res.json(jsonOut);
+        // return;
       }
       console.log(items);
       for (var i = 0; i < items.length; i++) {
         console.log(items[i]);
       }
+      // res.json(jsonOut);
+      return;
     });
+    // return;
 
 
     // Get file contents
     console.log(`file to read: ${locals.repoResourcePath}`);
     // res.json( jsonOut );
+    if (!fs.existsSync(testDir)) {
+      console.log(`DOESN'T EXIST`);
+      res.json(jsonOut);
+      return;
+    }
     fs.readFile(`${locals.repoResourcePath}`,
       (err, data) => {
         if (err) {
@@ -111,10 +139,20 @@ module.exports = async (req, res) => {
         };
         locals.fileText = data;
         console.log(`file : ${locals.repoResourcePath}\n${locals.fileText}`);
+        const { GCLOUD_CREDENTIALS } = require('./cloud.env').env
+        const { client_email, private_key, project_id } = JSON.parse(
+          Buffer.from(process.env.GCLOUD_CREDENTIALS, 'base64').toString()
+        );
+        console.log(`process.env.PROJECT_ID = ${process.env.PROJECT_ID}`)
         jsonOut = {
           ...jsonOut,
           fileText: `${locals.fileText}`,
+          client_email: client_email,
+          project_id: project_id,
+          private_key: private_key,
+          GCLOUD_CREDENTIALS: GCLOUD_CREDENTIALS,
         };
+        // GCLOUD_CREDENTIALS: process.env.GCLOUD_CREDENTIALS,
         // locals.fileHashes =  new AdHash( {text: data } );
         // console.log(locals.fileHashes.hashes);
         // jsonOut = { 
@@ -151,7 +189,7 @@ module.exports = async (req, res) => {
       is: `${locals.is}`,
       statusMsg: '',
       lsFilesMsg: '',
-      templateData: []
+      templateData: [],
     };
     res.json(jsonOut);
   }
