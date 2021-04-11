@@ -34,10 +34,11 @@ const { Storage } = require('@google-cloud/storage');
 
 // Creates a client from a Google service account key
 // const storage = new Storage({ keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS });
+const GCP_int_cred = process.env.GCLOUD_CREDENTIALS ? process.env.GCLOUD_CREDENTIALS : ""
 const GCP_cred = process.env.GOOGLE_APPLICATION_CREDENTIALS ?
   process.env.GOOGLE_APPLICATION_CREDENTIALS :
   JSON.parse(
-    Buffer.from(process.env.GCLOUD_CREDENTIALS, 'base64').toString()
+    Buffer.from(GCP_int_cred, 'base64').toString()
   );
 
 console.log(`GCP_cred = ${GCP_cred}`)
