@@ -1,7 +1,7 @@
 {
     "build": {
         "env": {
-            "GCLOUD_CREDENTIALS": "@GCLOUD_CREDENTIALS"
+            "test": "test"
         }
     },
     "functions": {
