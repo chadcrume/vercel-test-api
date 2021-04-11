@@ -1,7 +1,4 @@
 {
-    "env": {
-        "GCLOUD_CREDENTIALS": "@GCLOUD_CREDENTIALS"
-    },
     "functions": {
         "api/deck/[deckName].js": {
             "includeFiles": "api/deck/deckData/**"
