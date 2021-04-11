@@ -1,4 +1,9 @@
 {
+    "build": {
+        "env": {
+            "GCLOUD_CREDENTIALS": "@GCLOUD_CREDENTIALS"
+        }
+    },
     "functions": {
         "api/deck/[deckName].js": {
             "includeFiles": "api/deck/deckData/**"
@@ -6,11 +11,9 @@
         "api/[gitUser]/[repo].js": {
             "includeFiles": "*(cloud.env.js|gcp-key.json|api/[gitUser]/repos/**)"
         }
-    },
+    }
+    ,
     "rewrites": [
-        {
-            "source": "/(api|ccc)/:gitUser/:repo/:path*",
-            "destination": "/api/[gitUser]/[repo].js"
-        }
+        { "source": "/(api|ccc)/:gitUser/:repo/:path*", "destination": "/api/[gitUser]/[repo].js" }
     ]
 }
