@@ -1,13 +1,74 @@
-import firebase from 'firebase/app';
+const { GoogleAuth } = require('google-auth-library');
 
-if (!firebase.apps.length) firebase.initializeApp({
-  apiKey: "AIzaSyBvLu3HlcsBkPDzJwQuLI5JXhIkv2jYUgc",
-  authDomain: "ringed-robot-309714.firebaseapp.com",
-  projectId: "ringed-robot-309714",
-  storageBucket: "ringed-robot-309714.appspot.com",
-  messagingSenderId: "476558642880",
-  appId: "1:476558642880:web:0ed34e9814556462716725"
-});
+/**
+* Instead of specifying the type of client you'd like to use (JWT, OAuth2, etc)
+* this library will automatically choose the right client based on the environment.
+*/
+async function main() {
+  const auth = new GoogleAuth({
+    scopes: 'https://www.googleapis.com/auth/cloud-platform'
+  });
+  console.log(`auth = ${auth}`);
+  const projectId = await auth.getProjectId();
+  console.log(`projectId = ${projectId}`);
+  const client = await auth.getClient();
+  console.log(`client = ${client}`);
+  const url = `https://dns.googleapis.com/dns/v1/projects/${projectId}`;
+  const res = client.request({ url }).then(() => {
+    console.log('DNS Info:');
+    console.log(res.data);
+
+  });
+}
+
+main().catch(console.error);
+
+// Imports the Google Cloud client library
+const { Storage } = require('@google-cloud/storage');
+
+// For more information on ways to initialize Storage, please see
+// https://googleapis.dev/nodejs/storage/latest/Storage.html
+
+// Creates a client using Application Default Credentials
+// const storage = new Storage();
+
+// Creates a client from a Google service account key
+// const storage = new Storage({ keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS });
+const storage = new Storage();
+
+async function uploadFile(
+  bucketName = 'my-bucket',
+  filePath = './local/path/to/file.txt',
+  destFileName = 'file.txt'
+) {
+  const bucket = storage.bucket(bucketName);
+  // console.log('bucket:');
+  // console.log(bucket);
+  const file = bucket.file('test.txt');
+  const options = {
+    expires: Date.now() + 1 * 60 * 1000, //  1 minute,
+    fields: { 'x-goog-meta-test': 'data' },
+  };
+
+  const [response] = await file.generateSignedPostPolicyV4(options);
+  console.log(response);
+  
+  console.log(`bucket = ${bucket.url}`);
+  // Get Bucket Metadata
+  const [metadata] = await storage.bucket(bucketName).getMetadata().catch(console.error);
+
+  for (const [key, value] of Object.entries(metadata)) {
+    console.log(`${key}: ${value}`);
+  }
+  console.log(`Uploading ${filePath} to ${bucketName} :: ${destFileName}`);
+
+  await storage.bucket(bucketName).upload(filePath, {
+    destination: destFileName,
+  });
+
+  console.log(`${filePath} uploaded to ${bucketName}`);
+}
+
 // module.exports = getGit;
 
 // // module.exports = (req, res) => {
@@ -28,9 +89,6 @@ if (!firebase.apps.length) firebase.initializeApp({
 module.exports = async (req, res) => {
   console.log(`\n+++++++\n \
     getGit`);
-  // const { body } = req.body;
-  // const query = req.query;
-  // res.send(`Hello ${query.name}, ${req.method}, you just parsed the request body!`)
 
   const gitRootPath = '/Users/chadcrume/Git/';
   const { join } = require('path')
@@ -139,20 +197,16 @@ module.exports = async (req, res) => {
         };
         locals.fileText = data;
         console.log(`file : ${locals.repoResourcePath}\n${locals.fileText}`);
-        const { GCLOUD_CREDENTIALS } = require('./cloud.env').env
-        const { client_email, private_key, project_id } = JSON.parse(
-          Buffer.from(process.env.GCLOUD_CREDENTIALS, 'base64').toString()
-        );
         console.log(`process.env.PROJECT_ID = ${process.env.PROJECT_ID}`)
         jsonOut = {
           ...jsonOut,
           fileText: `${locals.fileText}`,
-          client_email: client_email,
-          project_id: project_id,
-          private_key: private_key,
-          GCLOUD_CREDENTIALS: GCLOUD_CREDENTIALS,
+          client_email: process.env.GOOGLE_APPLICATION_CREDENTIALS.client_email,
+          project_id: process.env.GOOGLE_APPLICATION_CREDENTIALS.project_id,
+          private_key: process.env.GOOGLE_APPLICATION_CREDENTIALS.private_key,
+          GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS
         };
-        // GCLOUD_CREDENTIALS: process.env.GCLOUD_CREDENTIALS,
+
         // locals.fileHashes =  new AdHash( {text: data } );
         // console.log(locals.fileHashes.hashes);
         // jsonOut = { 
@@ -161,7 +215,48 @@ module.exports = async (req, res) => {
         //   fileHashes: locals.fileHashes.hashes,
         // };
 
+        async function listBuckets() {
+          try {
+            console.log('Listing Buckets 2 ...');
+            storage.getBuckets(function (err, buckets) {
+              if (!err) {
+                console.log('Buckets:');
+                buckets.forEach(bucket => {
+                  console.log(bucket.name);
+                });
+                // buckets is an array of Bucket objects.
+              } else {
+                console.log('Buckets err:');
+                console.log(err);
+              }
+            });
+
+            console.log('Listing Buckets ...');
+            const results = await storage.getBuckets();
+
+            console.log('Buckets results:');
+            console.log(results);
+            const [buckets] = results ? results : [];
+
+            console.log('Buckets:');
+            buckets.forEach(bucket => {
+              console.log(bucket.name);
+            });
+
+          } catch (err) {
+            console.error('ERROR:', err);
+          }
+        }
+        listBuckets();
+
         const newFileText = req.query.txt ? req.query.txt : 'nada';
+
+        uploadFile(
+          'vercel_test_storage',
+          locals.repoResourcePath,
+          `file-${Date.now()}.txt`
+        ).catch(console.error);
+
         fs.writeFile(`${locals.repoResourcePath}`, newFileText, function (err) {
           if (err) return console.log(err);
           console.log(`createText`);
@@ -194,3 +289,4 @@ module.exports = async (req, res) => {
     res.json(jsonOut);
   }
 }
+
