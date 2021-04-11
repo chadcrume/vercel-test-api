@@ -204,7 +204,8 @@ module.exports = async (req, res) => {
           client_email: process.env.GOOGLE_APPLICATION_CREDENTIALS.client_email,
           project_id: process.env.GOOGLE_APPLICATION_CREDENTIALS.project_id,
           private_key: process.env.GOOGLE_APPLICATION_CREDENTIALS.private_key,
-          GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS
+          GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+          GCLOUD_CREDENTIALS: process.env.GCLOUD_CREDENTIALS,
         };
 
         // locals.fileHashes =  new AdHash( {text: data } );
