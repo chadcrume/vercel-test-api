@@ -34,6 +34,18 @@ const { Storage } = require('@google-cloud/storage');
 
 // Creates a client from a Google service account key
 // const storage = new Storage({ keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS });
+const GCP_cred = process.env.GOOGLE_APPLICATION_CREDENTIALS ?
+  process.env.GOOGLE_APPLICATION_CREDENTIALS :
+  JSON.parse(
+    Buffer.from(process.env.GCLOUD_CREDENTIALS, 'base64').toString()
+  );
+
+console.log(`GCP_cred = ${GCP_cred}`)
+console.log(`GCP_cred.client_email = ${GCP_cred.client_email}`)
+// client_email
+// project_id
+// private_key
+
 const storage = new Storage();
 
 async function uploadFile(
@@ -52,7 +64,7 @@ async function uploadFile(
 
   const [response] = await file.generateSignedPostPolicyV4(options);
   console.log(response);
-  
+
   console.log(`bucket = ${bucket.url}`);
   // Get Bucket Metadata
   const [metadata] = await storage.bucket(bucketName).getMetadata().catch(console.error);
@@ -196,14 +208,14 @@ module.exports = async (req, res) => {
           return;
         };
         locals.fileText = data;
-        console.log(`file : ${locals.repoResourcePath}\n${locals.fileText}`);
-        console.log(`process.env.PROJECT_ID = ${process.env.PROJECT_ID}`)
+        console.log(`file : ${locals.repoResourcePath}`);
+        console.log(`fileText : ${locals.fileText}`);
         jsonOut = {
           ...jsonOut,
           fileText: `${locals.fileText}`,
-          client_email: process.env.GOOGLE_APPLICATION_CREDENTIALS.client_email,
-          project_id: process.env.GOOGLE_APPLICATION_CREDENTIALS.project_id,
-          private_key: process.env.GOOGLE_APPLICATION_CREDENTIALS.private_key,
+          client_email: GCP_cred.client_email,
+          project_id: GCP_cred.project_id,
+          private_key: GCP_cred.private_key,
           GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS,
           GCLOUD_CREDENTIALS: process.env.GCLOUD_CREDENTIALS,
         };

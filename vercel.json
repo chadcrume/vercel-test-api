@@ -1,9 +1,4 @@
 {
-    "build": {
-        "env": {
-            "test": "again"
-        }
-    },
     "functions": {
         "api/deck/[deckName].js": {
             "includeFiles": "api/deck/deckData/**"
