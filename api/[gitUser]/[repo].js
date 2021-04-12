@@ -36,14 +36,15 @@ const { Storage } = require('@google-cloud/storage');
 // const storage = new Storage({ keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS });
 console.log(`process.env.GOOGLE_APPLICATION_CREDENTIALS = ${process.env.GOOGLE_APPLICATION_CREDENTIALS}`);
 console.log(`process.env.GCLOUD_CREDENTIALS = ${process.env.GCLOUD_CREDENTIALS}`);
-const GCP_int_cred = process.env.GCLOUD_CREDENTIALS ? process.env.GCLOUD_CREDENTIALS : "{}"
-const GCP_cred = process.env.GOOGLE_APPLICATION_CREDENTIALS ?
-  process.env.GOOGLE_APPLICATION_CREDENTIALS :
+const GCP_int_cred = process.env.GCLOUD_CREDENTIALS ?
   JSON.parse(
     Buffer.from(GCP_int_cred, 'base64').toString()
-  );
+  ) : "{}"
+const GCP_cred = process.env.GOOGLE_APPLICATION_CREDENTIALS ?
+  process.env.GOOGLE_APPLICATION_CREDENTIALS : GCP_int_cred
 
-console.log(`GCP_cred = ${GCP_cred}`);
+
+  console.log(`GCP_cred = ${GCP_cred}`);
 if (GCP_cred) console.log(`GCP_cred.client_email = ${GCP_cred.client_email}`);
 // client_email
 // project_id
