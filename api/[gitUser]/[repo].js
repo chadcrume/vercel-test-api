@@ -50,7 +50,11 @@ if (GCP_cred) console.log(`GCP_cred.client_email = ${GCP_cred.client_email}`);
 // project_id
 // private_key
 
-const storage = new Storage();
+// const storage = new Storage();
+const storage = new Storage({
+  projectId: GCP_cred.project_id,
+  credentials: GCP_cred
+});
 
 async function uploadFile(
   bucketName = 'my-bucket',
