@@ -1,60 +1,3 @@
-const { GoogleAuth } = require('google-auth-library');
-
-/**
-* Instead of specifying the type of client you'd like to use (JWT, OAuth2, etc)
-* this library will automatically choose the right client based on the environment.
-*/
-async function main() {
-  const auth = new GoogleAuth({
-    scopes: 'https://www.googleapis.com/auth/cloud-platform'
-  });
-  console.log(`auth = ${auth}`);
-  const projectId = await auth.getProjectId();
-  console.log(`projectId = ${projectId}`);
-  const client = await auth.getClient();
-  console.log(`client = ${client}`);
-  const url = `https://dns.googleapis.com/dns/v1/projects/${projectId}`;
-  const res = client.request({ url }).then(() => {
-    console.log('DNS Info:');
-    console.log(res.data);
-
-  });
-}
-
-main().catch(console.error);
-
-// Imports the Google Cloud client library
-const { Storage } = require('@google-cloud/storage');
-
-// For more information on ways to initialize Storage, please see
-// https://googleapis.dev/nodejs/storage/latest/Storage.html
-
-// Creates a client using Application Default Credentials
-// const storage = new Storage();
-
-// Creates a client from a Google service account key
-// const storage = new Storage({ keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS });
-console.log(`process.env.GOOGLE_APPLICATION_CREDENTIALS = ${process.env.GOOGLE_APPLICATION_CREDENTIALS}`);
-console.log(`process.env.GCLOUD_CREDENTIALS = ${process.env.GCLOUD_CREDENTIALS}`);
-const GCP_int_cred = process.env.GCLOUD_CREDENTIALS ?
-  JSON.parse(
-    Buffer.from(process.env.GCLOUD_CREDENTIALS, 'base64').toString()
-  ) : null;
-const GCP_cred = process.env.GOOGLE_APPLICATION_CREDENTIALS ?
-  process.env.GOOGLE_APPLICATION_CREDENTIALS : GCP_int_cred;
-
-
-  console.log(`GCP_cred = ${GCP_cred}`);
-if (GCP_cred) console.log(`GCP_cred.client_email = ${GCP_cred.client_email}`);
-// client_email
-// project_id
-// private_key
-
-// const storage = new Storage();
-const storage = new Storage({
-  projectId: GCP_cred.project_id,
-  credentials: GCP_cred
-});
 
 async function uploadFile(
   bucketName = 'my-bucket',
@@ -76,6 +19,7 @@ async function uploadFile(
   console.log(`bucket = ${bucket.url}`);
   // Get Bucket Metadata
   const [metadata] = await storage.bucket(bucketName).getMetadata().catch(console.error);
+  console.log(`metadata: ${metadata}`);
 
   for (const [key, value] of Object.entries(metadata)) {
     console.log(`${key}: ${value}`);
@@ -107,6 +51,99 @@ async function uploadFile(
 //     getGit`);
 // }
 module.exports = async (req, res) => {
+  var jsonOut = {};
+
+  console.log(`\n+++++++++++++++++++++++++++++++++++++++++++++++++\n \
+    GCP test`);
+  // Imports the Google Cloud client library
+  const { Storage } = require('@google-cloud/storage');
+
+  console.log(`process.env.GCLOUD_CREDENTIALS = ${process.env.GCLOUD_CREDENTIALS}`);
+  const GCP_cred = process.env.GCLOUD_CREDENTIALS ?
+    JSON.parse(
+      Buffer.from(process.env.GCLOUD_CREDENTIALS, 'base64').toString()
+    ) : null;
+  
+  console.log(`GCP_cred = ${GCP_cred}`);
+  if (GCP_cred) console.log(`GCP_cred.client_email = ${GCP_cred.client_email}`);
+
+  // For more information on ways to initialize Storage, please see
+  // https://googleapis.dev/nodejs/storage/latest/Storage.html
+
+  console.log(`GCP_cred.project_id = ${GCP_cred.project_id}`);
+  console.log(`GCP_cred.client_email = ${GCP_cred.client_email}`);
+  const storage = new Storage({
+    projectId: GCP_cred.project_id,
+    credentials: GCP_cred,
+    maxRetries: 3,
+  });
+  console.log(`storage = ${storage}`);
+
+
+  // console.log(`Example from https://cloud.google.com/storage/docs/reference/libraries#client-libraries-install-nodejs`);
+
+  // /**
+  //  * TODO(developer): Uncomment these variables before running the sample.
+  //  */
+  // // The ID of your GCS bucket
+  // const bucketName = 'your-unique-bucket-name';
+  // console.log(`bucketName = ${bucketName}`);
+
+  // async function createBucket() {
+  //   // Creates the new bucket
+  //   await storage.createBucket(bucketName);
+  //   console.log(`Bucket ${bucketName} created.`);
+  // }
+
+  // createBucket().catch(console.error);
+
+  // console.log(`Example from https://cloud.google.com/docs/authentication/getting-started`);
+
+  // async function listBuckets() {
+  //   try {
+  //     const results = await storage.getBuckets();
+
+  //     const [buckets] = results;
+
+  //     console.log('Buckets:');
+  //     buckets.forEach(bucket => {
+  //       console.log(bucket.name);
+  //     });
+  //   } catch (err) {
+  //     console.error('ERROR:', err);
+  //   }
+  // }
+  // listBuckets();
+
+  console.log(`Example from https://cloud.google.com/storage/docs/listing-buckets#code-samples`);
+  async function listBuckets() {
+    try {
+      const [buckets] = await storage.getBuckets();
+
+      console.log('Buckets:');
+      buckets.forEach(bucket => {
+        console.log(bucket.name);
+      });
+
+      jsonOut = {
+        ...jsonOut,
+        buckets: buckets,
+      };
+    } catch (err) {
+      console.error('ERROR:', err);
+    }
+  }
+  await listBuckets().catch(console.error);
+
+  console.log(`Example from https://googleapis.dev/nodejs/storage/latest/Storage.html#bucket`);
+  const albums = storage.bucket('albums');
+  console.log(`albums = ${albums}`);
+  console.log(`albums.exists() = ${albums.exists(function (err, exists) {
+    console.log(`err = ${err}`);
+    console.log(`exists = ${exists}`);
+  })}`);
+
+
   console.log(`\n+++++++\n \
     getGit`);
 
@@ -115,7 +152,6 @@ module.exports = async (req, res) => {
   const fs = require('fs');
 
   console.log(`\n+++++++\nadhocSetVars`);
-  var jsonOut = {};
   var locals = {};
   locals.title = "Browse";
   locals.url = decodeURIComponent(req.url);
@@ -148,6 +184,7 @@ module.exports = async (req, res) => {
   );
 
   console.log(`\n+++++++\nadhocGetHtml @ ${locals.repoResourcePath}`);
+
 
   if (!locals.isDir) {
     // Files have data from route/repo data only, no git status or ls-files.
@@ -224,10 +261,9 @@ module.exports = async (req, res) => {
           client_email: GCP_cred.client_email,
           project_id: GCP_cred.project_id,
           private_key: GCP_cred.private_key,
-          GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS,
           GCLOUD_CREDENTIALS: process.env.GCLOUD_CREDENTIALS,
         };
-
+        // GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS,
         // locals.fileHashes =  new AdHash( {text: data } );
         // console.log(locals.fileHashes.hashes);
         // jsonOut = { 
@@ -236,52 +272,52 @@ module.exports = async (req, res) => {
         //   fileHashes: locals.fileHashes.hashes,
         // };
 
-        async function listBuckets() {
-          try {
-            console.log('Listing Buckets 2 ...');
-            storage.getBuckets(function (err, buckets) {
-              if (!err) {
-                console.log('Buckets:');
-                buckets.forEach(bucket => {
-                  console.log(bucket.name);
-                });
-                // buckets is an array of Bucket objects.
-              } else {
-                console.log('Buckets err:');
-                console.log(err);
-              }
-            });
+        // async function listBuckets() {
+        //   try {
+        //     console.log('Listing Buckets 2 ...');
+        //     storage.getBuckets(function (err, buckets) {
+        //       if (!err) {
+        //         console.log('Buckets:');
+        //         buckets.forEach(bucket => {
+        //           console.log(bucket.name);
+        //         });
+        //         // buckets is an array of Bucket objects.
+        //       } else {
+        //         console.log('Buckets err:');
+        //         console.log(err);
+        //       }
+        //     });
 
-            console.log('Listing Buckets ...');
-            const results = await storage.getBuckets();
+        //     console.log('Listing Buckets ...');
+        //     const results = await storage.getBuckets();
 
-            console.log('Buckets results:');
-            console.log(results);
-            const [buckets] = results ? results : [];
+        //     console.log('Buckets results:');
+        //     console.log(results);
+        //     const [buckets] = results ? results : [];
 
-            console.log('Buckets:');
-            buckets.forEach(bucket => {
-              console.log(bucket.name);
-            });
+        //     console.log('Buckets:');
+        //     buckets.forEach(bucket => {
+        //       console.log(bucket.name);
+        //     });
 
-          } catch (err) {
-            console.error('ERROR:', err);
-          }
-        }
-        listBuckets();
+        //   } catch (err) {
+        //     console.error('ERROR:', err);
+        //   }
+        // }
+        // listBuckets();
 
         const newFileText = req.query.txt ? req.query.txt : 'nada';
 
-        uploadFile(
-          'vercel_test_storage',
-          locals.repoResourcePath,
-          `file-${Date.now()}.txt`
-        ).catch(console.error);
+        // uploadFile(
+        //   'vercel_test_storage',
+        //   locals.repoResourcePath,
+        //   `file-${Date.now()}.txt`
+        // ).catch(console.error);
 
-        fs.writeFile(`${locals.repoResourcePath}`, newFileText, function (err) {
-          if (err) return console.log(err);
-          console.log(`createText`);
-        });
+        // fs.writeFile(`${locals.repoResourcePath}`, newFileText, function (err) {
+        //   if (err) return console.log(err);
+        //   console.log(`createText`);
+        // });
 
         res.json(jsonOut);
       }
