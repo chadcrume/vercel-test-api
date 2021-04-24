@@ -1,21 +1,21 @@
-// module.exports = getGit;
+const allowCors = fn => async (req, res) => {
+  res.setHeader('Access-Control-Allow-Credentials', true)
+  res.setHeader('Access-Control-Allow-Origin', '*-cseeingsea.vercel.app')
+  // another common pattern
+  // res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  )
+  if (req.method === 'OPTIONS') {
+    res.status(200).end()
+    return
+  }
+  return await fn(req, res)
+}
 
-// // module.exports = (req, res) => {
-// //   res.json({
-// //     body: req.body,
-// //     query: req.query,
-// //     cookies: req.cookies,
-// //   })
-// // }
-
-// // app.get(["/deckData/:deckName/", "/deckData/:deckName/*"], getGit);
-
-// // Set up REST end point
-// function getGit(req, res) {
-//   console.log(`\n+++++++\n \
-//     getGit`);
-// }
-module.exports = async (req, res) => {
+const handler = async (req, res) => {
   var jsonOut = {};
 
   console.log(`\n+++++++++++++++++++++++++++++++++++++++++++++++++\n \
@@ -301,4 +301,6 @@ module.exports = async (req, res) => {
     res.json(jsonOut);
   }
 }
+
+module.exports = allowCors(handler)
 
