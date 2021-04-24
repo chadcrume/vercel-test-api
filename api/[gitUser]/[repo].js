@@ -1,6 +1,6 @@
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true)
-  const allowedOrigins = ['http://localhost', 'http://localhost:3001', 'http://vercel-test-api-cseeingsea.vercel.app']
+  const allowedOrigins = ['http://localhost', 'http://localhost:3001', 'http://vercel-test-api-cseeingsea.vercel.app', 'http://vue-examples.vercel.app']
   console.log(`req.headers.origin = ${req.headers.origin}`);
   if (allowedOrigins.find(item => item == req.headers.origin)) {
     console.log('Access-Control-Allow-Origin');
