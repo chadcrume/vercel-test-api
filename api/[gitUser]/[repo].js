@@ -1,7 +1,13 @@
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true)
-  // res.setHeader('Access-Control-Allow-Origin', '*-cseeingsea.vercel.app')
-  res.setHeader('Access-Control-Allow-Origin', '*')
+  const allowedOrigins = ['http://localhost', 'http://localhost:3001', 'http://vercel-test-api-cseeingsea.vercel.app']
+  console.log(`req.headers.origin = ${req.headers.origin}`);
+  if (allowedOrigins.find(item => item == req.headers.origin)) {
+    console.log('Access-Control-Allow-Origin');
+    // res.setHeader('Access-Control-Allow-Origin', '*-cseeingsea.vercel.app')
+    // res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+  }
   // another common pattern
   // res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
