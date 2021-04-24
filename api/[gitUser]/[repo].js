@@ -156,6 +156,7 @@ module.exports = async (req, res) => {
   locals.repoRootPath = gitRootPath + locals.repo + '/';
   // locals.repoResourcePath = locals.repoRootPath + locals.path;
   locals.repoResourcePath = join(__dirname, 'repos', locals.path);
+  locals.uploadResourcePath = join('repos', locals.path);
   locals.repoResourceParentPathEls = locals.repoResourcePath.split('/');
   locals.repoResourceName = locals.repoResourceParentPathEls.pop();
   locals.repoResourceParentPath = locals.repoResourceParentPathEls.join('/') + '/';
@@ -178,8 +179,9 @@ module.exports = async (req, res) => {
   await uploadFile(
     'vercel_test_storage',
     locals.repoResourcePath,
-    `file-${Date.now()}.txt`
+    locals.uploadResourcePath
   ).catch(console.error);
+  // `test/file-${Date.now()}.txt`
 
   console.log(`\n+++++++\nadhocGetHtml @ ${locals.repoResourcePath}`);
 
@@ -245,7 +247,7 @@ module.exports = async (req, res) => {
     // }
     let readFilePromise = promisify(fs.readFile);
 
-    readFilePromise(`${locals.repoResourcePath}`).then((data)=>{
+    readFilePromise(`${locals.repoResourcePath}`).then((data) => {
 
       locals.fileText = data;
       const newFileText = req.query.txt ? req.query.txt : 'nada';
@@ -270,10 +272,10 @@ module.exports = async (req, res) => {
 
       res.json(jsonOut);
 
-    }).catch((err)=>{
-              // console.error(`Read file error : ${err}`);
-              res.json(err);
-              return;      
+    }).catch((err) => {
+      // console.error(`Read file error : ${err}`);
+      res.json(err);
+      return;
     });
 
   } else {
