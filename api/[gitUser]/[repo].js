@@ -1,38 +1,3 @@
-
-async function uploadFile(
-  bucketName = 'my-bucket',
-  filePath = './local/path/to/file.txt',
-  destFileName = 'file.txt'
-) {
-  const bucket = storage.bucket(bucketName);
-  // console.log('bucket:');
-  // console.log(bucket);
-  const file = bucket.file('test.txt');
-  const options = {
-    expires: Date.now() + 1 * 60 * 1000, //  1 minute,
-    fields: { 'x-goog-meta-test': 'data' },
-  };
-
-  const [response] = await file.generateSignedPostPolicyV4(options);
-  console.log(response);
-
-  console.log(`bucket = ${bucket.url}`);
-  // Get Bucket Metadata
-  const [metadata] = await storage.bucket(bucketName).getMetadata().catch(console.error);
-  console.log(`metadata: ${metadata}`);
-
-  for (const [key, value] of Object.entries(metadata)) {
-    console.log(`${key}: ${value}`);
-  }
-  console.log(`Uploading ${filePath} to ${bucketName} :: ${destFileName}`);
-
-  await storage.bucket(bucketName).upload(filePath, {
-    destination: destFileName,
-  });
-
-  console.log(`${filePath} uploaded to ${bucketName}`);
-}
-
 // module.exports = getGit;
 
 // // module.exports = (req, res) => {
@@ -63,15 +28,17 @@ module.exports = async (req, res) => {
     JSON.parse(
       Buffer.from(process.env.GCLOUD_CREDENTIALS, 'base64').toString()
     ) : null;
-  
+
   console.log(`GCP_cred = ${GCP_cred}`);
-  if (GCP_cred) console.log(`GCP_cred.client_email = ${GCP_cred.client_email}`);
+  if (GCP_cred) {
+    console.log(`GCP_cred.client_email = ${GCP_cred.client_email}`)
+    console.log(`GCP_cred.project_id = ${GCP_cred.project_id}`);
+    console.log(`GCP_cred.client_email = ${GCP_cred.client_email}`);
+  };
 
   // For more information on ways to initialize Storage, please see
   // https://googleapis.dev/nodejs/storage/latest/Storage.html
 
-  console.log(`GCP_cred.project_id = ${GCP_cred.project_id}`);
-  console.log(`GCP_cred.client_email = ${GCP_cred.client_email}`);
   const storage = new Storage({
     projectId: GCP_cred.project_id,
     credentials: GCP_cred,
@@ -79,6 +46,13 @@ module.exports = async (req, res) => {
   });
   console.log(`storage = ${storage}`);
 
+  jsonOut = {
+    ...jsonOut,
+    client_email: GCP_cred.client_email,
+    project_id: GCP_cred.project_id,
+  };
+  // private_key: GCP_cred.private_key,
+  // GCLOUD_CREDENTIALS: process.env.GCLOUD_CREDENTIALS,
 
   // console.log(`Example from https://cloud.google.com/storage/docs/reference/libraries#client-libraries-install-nodejs`);
 
@@ -96,24 +70,6 @@ module.exports = async (req, res) => {
   // }
 
   // createBucket().catch(console.error);
-
-  // console.log(`Example from https://cloud.google.com/docs/authentication/getting-started`);
-
-  // async function listBuckets() {
-  //   try {
-  //     const results = await storage.getBuckets();
-
-  //     const [buckets] = results;
-
-  //     console.log('Buckets:');
-  //     buckets.forEach(bucket => {
-  //       console.log(bucket.name);
-  //     });
-  //   } catch (err) {
-  //     console.error('ERROR:', err);
-  //   }
-  // }
-  // listBuckets();
 
   console.log(`Example from https://cloud.google.com/storage/docs/listing-buckets#code-samples`);
   async function listBuckets() {
@@ -135,13 +91,48 @@ module.exports = async (req, res) => {
   }
   await listBuckets().catch(console.error);
 
-  console.log(`Example from https://googleapis.dev/nodejs/storage/latest/Storage.html#bucket`);
-  const albums = storage.bucket('albums');
-  console.log(`albums = ${albums}`);
-  console.log(`albums.exists() = ${albums.exists(function (err, exists) {
-    console.log(`err = ${err}`);
-    console.log(`exists = ${exists}`);
-  })}`);
+  // console.log(`Example from https://googleapis.dev/nodejs/storage/latest/Storage.html#bucket`);
+  // const albums = storage.bucket('albums');
+  // console.log(`albums = ${albums}`);
+  // console.log(`albums.exists() = ${albums.exists(function (err, exists) {
+  //   console.log(`err = ${err}`);
+  //   console.log(`exists = ${exists}`);
+  // })}`);
+
+  async function uploadFile(
+    bucketName = 'my-bucket',
+    filePath = './local/path/to/file.txt',
+    destFileName = 'file.txt'
+  ) {
+    const bucket = storage.bucket(bucketName);
+    // console.log('bucket:');
+    // console.log(bucket);
+    const file = bucket.file('test.txt');
+    console.log(`file = ${file}`);
+    const options = {
+      expires: Date.now() + 1 * 60 * 1000, //  1 minute,
+      fields: { 'x-goog-meta-test': 'data' },
+    };
+
+    const [response] = await file.generateSignedPostPolicyV4(options);
+    console.log(response);
+
+    console.log(`bucket = ${bucket}`);
+    // Get Bucket Metadata
+    const [metadata] = await bucket.getMetadata().catch(console.error);
+    console.log(`metadata: ${metadata}`);
+
+    for (const [key, value] of Object.entries(metadata)) {
+      console.log(`${key}: ${value}`);
+    }
+    console.log(`Uploading ${filePath} to ${bucketName} :: ${destFileName}`);
+
+    await storage.bucket(bucketName).upload(filePath, {
+      destination: destFileName,
+    });
+
+    console.log(`${filePath} uploaded to ${bucketName}`);
+  }
 
 
   console.log(`\n+++++++\n \
@@ -150,6 +141,7 @@ module.exports = async (req, res) => {
   const gitRootPath = '/Users/chadcrume/Git/';
   const { join } = require('path')
   const fs = require('fs');
+  const { promisify } = require('util');
 
   console.log(`\n+++++++\nadhocSetVars`);
   var locals = {};
@@ -183,6 +175,12 @@ module.exports = async (req, res) => {
     'req.query.txt = ' + req.query.txt + '\n'
   );
 
+  await uploadFile(
+    'vercel_test_storage',
+    locals.repoResourcePath,
+    `file-${Date.now()}.txt`
+  ).catch(console.error);
+
   console.log(`\n+++++++\nadhocGetHtml @ ${locals.repoResourcePath}`);
 
 
@@ -205,123 +203,78 @@ module.exports = async (req, res) => {
       is: `${locals.is}`,
       templateData: []
     };
-    console.log(`****************************** \n`)
-    const testDir = join(__dirname, '');
-    const testDir1 = join(__dirname, 'repos');
-    const testDir2 = join(__dirname, 'repos', 'mzc');
-    const testDir3 = join(__dirname, 'repos', 'mzc', 'MAZC.txt');
-    console.log(`exists??? === ${fs.existsSync(testDir)}`)
-    console.log(`exists??? === ${fs.existsSync(testDir1)}`)
-    console.log(`exists??? === ${fs.existsSync(testDir2)}`)
-    console.log(`exists??? === ${fs.existsSync(testDir3)}`)
-    console.log(`****************************** \n` +
-      `testDir = ${testDir}`);
-    fs.readdir(testDir, function (err, items) {
-      if (err) {
-        console.log(err);
-        res.json(err);
-        return;
-      }
-      if (!items) {
-        console.log('no items');
-        // res.json(jsonOut);
-        // return;
-      }
-      console.log(items);
-      for (var i = 0; i < items.length; i++) {
-        console.log(items[i]);
-      }
-      // res.json(jsonOut);
-      return;
-    });
-    // return;
+    // console.log(`****************************** \n`)
+    // const testDir = join(__dirname, '');
+    // const testDir1 = join(__dirname, 'repos');
+    // const testDir2 = join(__dirname, 'repos', 'mzc');
+    // const testDir3 = join(__dirname, 'repos', 'mzc', 'MAZC.txt');
+    // console.log(`exists??? === ${fs.existsSync(testDir)}`)
+    // console.log(`exists??? === ${fs.existsSync(testDir1)}`)
+    // console.log(`exists??? === ${fs.existsSync(testDir2)}`)
+    // console.log(`exists??? === ${fs.existsSync(testDir3)}`)
+    // console.log(`****************************** \n` +
+    //   `testDir = ${testDir}`);
+    // fs.readdir(testDir, function (err, items) {
+    //   if (err) {
+    //     console.log(err);
+    //     res.json(err);
+    //     return;
+    //   }
+    //   if (!items) {
+    //     console.log('no items');
+    //     // res.json(jsonOut);
+    //     // return;
+    //   }
+    //   console.log(items);
+    //   for (var i = 0; i < items.length; i++) {
+    //     console.log(items[i]);
+    //   }
+    //   // res.json(jsonOut);
+    //   return;
+    // });
+    // // return;
 
 
     // Get file contents
     console.log(`file to read: ${locals.repoResourcePath}`);
     // res.json( jsonOut );
-    if (!fs.existsSync(testDir)) {
-      console.log(`DOESN'T EXIST`);
+    // if (!fs.existsSync(testDir)) {
+    //   console.log(`DOESN'T EXIST`);
+    //   res.json(jsonOut);
+    //   return;
+    // }
+    let readFilePromise = promisify(fs.readFile);
+
+    readFilePromise(`${locals.repoResourcePath}`).then((data)=>{
+
+      locals.fileText = data;
+      const newFileText = req.query.txt ? req.query.txt : 'nada';
+      console.log(`file : ${locals.repoResourcePath}`);
+      console.log(`fileText : ${locals.fileText}`);
+      console.log(`newFileText : ${newFileText}`);
+      jsonOut = {
+        ...jsonOut,
+        fileText: `${locals.fileText}`,
+      };
+
+      // doUploadFile(
+      //   'vercel_test_storage',
+      //   locals.repoResourcePath,
+      //   `file-${Date.now()}.txt`
+      // ).catch(console.error);
+
+      // fs.writeFile(`${locals.repoResourcePath}`, newFileText, function (err) {
+      //   if (err) return console.log(err);
+      //   console.log(`createText`);
+      // });
+
       res.json(jsonOut);
-      return;
-    }
-    fs.readFile(`${locals.repoResourcePath}`,
-      (err, data) => {
-        if (err) {
-          // console.error(`Read file error : ${err}`);
-          res.json(err);
-          return;
-        };
-        locals.fileText = data;
-        console.log(`file : ${locals.repoResourcePath}`);
-        console.log(`fileText : ${locals.fileText}`);
-        jsonOut = {
-          ...jsonOut,
-          fileText: `${locals.fileText}`,
-          client_email: GCP_cred.client_email,
-          project_id: GCP_cred.project_id,
-          private_key: GCP_cred.private_key,
-          GCLOUD_CREDENTIALS: process.env.GCLOUD_CREDENTIALS,
-        };
-        // GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-        // locals.fileHashes =  new AdHash( {text: data } );
-        // console.log(locals.fileHashes.hashes);
-        // jsonOut = { 
-        //   ...jsonOut,
-        //   fileText: `${locals.fileText}`,
-        //   fileHashes: locals.fileHashes.hashes,
-        // };
 
-        // async function listBuckets() {
-        //   try {
-        //     console.log('Listing Buckets 2 ...');
-        //     storage.getBuckets(function (err, buckets) {
-        //       if (!err) {
-        //         console.log('Buckets:');
-        //         buckets.forEach(bucket => {
-        //           console.log(bucket.name);
-        //         });
-        //         // buckets is an array of Bucket objects.
-        //       } else {
-        //         console.log('Buckets err:');
-        //         console.log(err);
-        //       }
-        //     });
-
-        //     console.log('Listing Buckets ...');
-        //     const results = await storage.getBuckets();
-
-        //     console.log('Buckets results:');
-        //     console.log(results);
-        //     const [buckets] = results ? results : [];
-
-        //     console.log('Buckets:');
-        //     buckets.forEach(bucket => {
-        //       console.log(bucket.name);
-        //     });
-
-        //   } catch (err) {
-        //     console.error('ERROR:', err);
-        //   }
-        // }
-        // listBuckets();
-
-        const newFileText = req.query.txt ? req.query.txt : 'nada';
-
-        // uploadFile(
-        //   'vercel_test_storage',
-        //   locals.repoResourcePath,
-        //   `file-${Date.now()}.txt`
-        // ).catch(console.error);
-
-        // fs.writeFile(`${locals.repoResourcePath}`, newFileText, function (err) {
-        //   if (err) return console.log(err);
-        //   console.log(`createText`);
-        // });
-
-        res.json(jsonOut);
-      }
-    );
+    }).catch((err)=>{
+              // console.error(`Read file error : ${err}`);
+              res.json(err);
+              return;      
+    });
 
   } else {
     // Directories have data from route/repo data, git status, and ls-files.
