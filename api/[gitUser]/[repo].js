@@ -142,6 +142,30 @@ const handler = async (req, res) => {
     console.log(`${filePath} uploaded to ${bucketName}`);
   }
 
+  async function loadFile(
+    bucketName = 'my-bucket',
+    filePath = './file.txt'
+  ) {
+
+    const bucket = storage.bucket(bucketName);
+
+    const file = bucket.file(filePath);
+    console.log(`file = ${file}`);
+
+    // await file.exists(function (err, exists) { 
+    //   console.log(`file exists.exists = ${exists}`);
+    // });
+
+    console.log(`Loading from ${bucketName}: ${filePath}`);
+    var fileContent = 'nothin';
+    await file.download().then(function (data) {
+      fileContent = data[0];
+    });
+    console.log(`fileContent = ${fileContent}`);
+    console.log(`Loaded from ${bucketName}: ${filePath}`);
+    return fileContent;
+  }
+
   async function saveFile(
     bucketName = 'my-bucket',
     filePath = './file.txt',
@@ -167,6 +191,7 @@ const handler = async (req, res) => {
     await file.save(fileContent);
 
     console.log(`Saved to ${bucketName}: ${filePath}`);
+    return fileContent;
   }
 
 
@@ -187,7 +212,8 @@ const handler = async (req, res) => {
     .replace(new RegExp(`/api/${locals.gitUser}/${locals.repo}/?`, "g"), '')
     .replace(new RegExp(`\\?(.*)`, "g"), '');
   locals.relativeRepoResourcePath = join('repos', locals.gitUser, locals.repo, locals.path);
-  locals.fileContent = req.query.txt;
+  locals.fileContent = 'nada';
+  locals.newFileContent = req.query.txt;
 
   console.log(
     '+++++++++++' + '\n' +
@@ -196,7 +222,7 @@ const handler = async (req, res) => {
     'locals.repo = ' + locals.repo + '\n' +
     'locals.path = ' + locals.path + '\n' +
     'locals.relativeRepoResourcePath = ' + locals.relativeRepoResourcePath + '\n' +
-    'locals.fileContent = ' + locals.fileContent + '\n'
+    'locals.newFileContent = ' + locals.newFileContent + '\n'
   );
 
   // await uploadFile(
@@ -206,12 +232,23 @@ const handler = async (req, res) => {
   // ).catch(console.error);
   // // `test/file-${Date.now()}.txt`
 
-  await saveFile(
-    'vercel_test_storage',
-    locals.relativeRepoResourcePath,
-    locals.fileContent
-  ).catch(console.error);
-  // `test/file-${Date.now()}.txt`
+  if (locals.newFileContent) {
+    await saveFile(
+      'vercel_test_storage',
+      locals.relativeRepoResourcePath,
+      locals.newFileContent
+    ).then((fileContent) => {
+      locals.fileContent = fileContent;
+    }).catch(console.error);
+    // `test/file-${Date.now()}.txt`
+  } else {
+    await loadFile(
+      'vercel_test_storage',
+      locals.relativeRepoResourcePath
+    ).then((fileContent) => {
+      locals.fileContent = fileContent;
+    }).catch(console.error);
+  }
 
   console.log(`\n+++++++\nadhocGetHtml @ ${locals.relativeRepoResourcePath}`);
 
@@ -225,6 +262,7 @@ const handler = async (req, res) => {
     repo: locals.repo,
     path: `${locals.path}`,
     query_txt: `${req.query.txt}`,
+    fileContent: `${locals.fileContent}`,
   };
   res.json(jsonOut);
 
